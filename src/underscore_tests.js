@@ -152,29 +152,127 @@ var _ = { };
 
   // Calls the method named by methodName on each value in the list.
   _.invoke = function(list, methodName, args) {
-    for (var i = 0; i < list.length; i++) {
-      list[i].forEach(methodName.apply(list[i], args));
-    }
+    if (typeof methodName === "string") {
+        for (var i = 0; i < list.length; i++) {
+          list[i][methodName](args);
+        }
+      } else if (typeof methodName  === "function") {
+        for (var i = 0; i < list.length; i++) {
+          methodName.call(list[i]);
+        }
+      }
+    return list;
   };
 
   // Reduces an array or object to a single value by repetitively calling
   // iterator(previousValue, item) for each item. previousValue should be
   // the return value of the previous iterator call.
   _.reduce = function(collection, iterator, initialValue) {
+    var previousValue = initialValue || 0;
+    if (collection.isArray) {
+      for (var i = 0; i < collection.length; i++) {
+        previousValue = iterator(previousValue, collection[i]);
+      }
+    } else {
+      for (var key in collection) {
+        previousValue = iterator(previousValue, collection[ key ]);
+      }
+    }
+    return previousValue;
   };
 
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
+    var isNotIn = false;
+    if (collection.isArray) {
+      for (var i = 0; i < collection.length; i++) {
+        if (collection[i] === target) {
+          return true;
+        }
+      }
+    } else {
+      for (var key in collection) {
+        if (collection[ key ] === target) {
+          return true;
+        }
+      }
+    }
+    return false;
   };
 
 
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
+    if (!iterator) {
+        if (collection.isArray) {
+          for (var i = 0; i < collection.length; i++) {
+            if (!collection[i]) {
+              return false;
+            }
+          }
+        } else {
+          for (var key in collection) {
+            if (!collection[ key ]) {
+              return false;
+            }
+          }
+        }
+        return true;
+
+      } else {
+
+        if (collection.isArray) {
+          for (var i = 0; i < collection.length; i++) {
+            if (!iterator(collection[i])) {
+              return false;
+            }
+          }
+        } else {
+          for (var key in collection) {
+            if (!iterator(collection[ key ])) {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
+    if (!iterator) {
+      // if (collection.isArray) {
+        for (var i = 0; i < collection.length; i++) {
+          if (collection[i]) {
+            return true;
+          }
+        }
+      // } else {
+      //   for (var key in collection) {
+      //     if (collection[ key ]) {
+      //       return true;
+      //     }
+      //   }
+      // }
+      return false;
+
+    } else {
+
+      // if (collection.isArray) {
+        for (var i = 0; i < collection.length; i++) {
+          if (iterator(collection[i])) {
+            return true;
+          }
+        }
+      // } else {
+      //   for (var key in collection) {
+      //     if (iterator(collection[ key ]));
+      //     return true;
+      //   }
+      // }
+      return false;
+    }
   };
 
 
@@ -188,6 +286,7 @@ var _ = { };
   // Extend a given object with all the properties of the passed in
   // object(s).
   _.extend = function(obj) {
+    
   };
 
   // Like extend, but doesn't ever overwrite a key that already
