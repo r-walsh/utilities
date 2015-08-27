@@ -16,48 +16,145 @@ var _ = { };
   // Return an array of the first n elements of an array. If n is undefined,
   // return just the first element.
   _.first = function(array, n) {
+    if (n === undefined) {
+      return array[0];
+    } else {
+      array.splice(n, array.length + 1);
+      return array;
+    }
   };
 
   // Like first, but for the last elements. If n is undefined, return just the
   // last element.
   _.last = function(array, n) {
+    if (n === undefined) {
+      return array[array.length -1];
+    } else {
+      array.splice(0, array.length - n)
+      return array;
+    }
   };
 
   // Call iterator(value, key, collection) for each element of collection.
   // Accepts both arrays and objects.
   _.each = function(collection, iterator) {
+    if (collection.isArray) {
+      for (var i = 0; i < collection.length; i++) {
+        iterator(collection[i], i, collection);
+      }
+    } else {
+      for (var key in collection) {
+        iterator(collection[key], key, collection);
+      }
+    }
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
   // is not present in the array.
   _.indexOf = function(array, target){
+    var inArray = false;
+    for (var i = 0; i < array.length; i++) {
+      if (array[i] === target) {
+        inArray = true;
+        return i;
+      }
+    }
+    if (inArray !== false) {
+      return inArray;
+    } else {
+      return -1;
+    }
   };
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, iterator) {
+    var holder = [];
+    if (collection.isArray) {
+      for (var i = 0; i < collection.length; i++) {
+        if (iterator(collection[i])) {
+          holder.push(collection[i]);
+        }
+      }
+      return holder;
+    } else {
+      for (var key in collection) {
+        if (iterator(collection[key])) {
+          holder.push(collection[key]);
+        }
+      }
+      return holder;
+    }
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, iterator) {
+    var holder = [];
+    if (collection.isArray) {
+      for (var i = 0; i < collection.length; i++) {
+        if (!iterator(collection[i])) {
+          holder.push(collection[i]);
+        }
+      }
+      return holder;
+    } else {
+      for (var key in collection) {
+        if (!iterator(collection[ key ])) {
+          holder.push(collection[ key ]);
+        }
+      }
+    }
+    return holder;
   };
 
   // Produce a duplicate-free version of the array.
-  _.uniq = function(array) {
+  _.uniq = function(arr) {
+    var i, j, cur, found;
+    for (i = arr.length - 1; i >= 0; i--) {
+        cur = arr[i];
+        found = false;
+        for (j = i - 1; !found && j >= 0; j--) {
+            if (cur === arr[j]) {
+                if (i !== j) {
+                    arr.splice(i, 1);
+                }
+                found = true;
+            }
+        }
+    }
+    return arr;    
   };
 
 
   // Return the results of applying an iterator to each element.
   _.map = function(array, iterator) {
+    var holder = [];
+    for (var i = 0; i < array.length; i++) {
+      holder.push(iterator(array[i]));
+    }
+    return holder;
   };
 
   // Takes an array of objects and returns and array of the values of
   // a certain property in it. E.g. take an array of people and return
   // an array of just their ages
   _.pluck = function(array, propertyName) {
+    var selectedReturn = [];
+    for (var i = 0; i < array.length; i++) {
+      var tempObj = array[i];
+      for (var key in tempObj) {
+        if (key === propertyName) {
+          selectedReturn.push(tempObj[key]);
+        }
+      }
+    }
+    return selectedReturn;
   };
 
   // Calls the method named by methodName on each value in the list.
   _.invoke = function(list, methodName, args) {
+    for (var i = 0; i < list.length; i++) {
+      list[i].forEach(methodName.apply(list[i], args));
+    }
   };
 
   // Reduces an array or object to a single value by repetitively calling
