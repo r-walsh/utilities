@@ -333,8 +333,7 @@ var _ = { };
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
-    var holder = func();
-    return holder(arg);
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -350,25 +349,24 @@ var _ = { };
 
 
   // Shuffle an array.
-  _.shuffle = function(arr) { //Not sure what is happening here, tried my own function first, then pulled 
-                              // a proven one from stackoverflow and nothing works.
-    var counter = array.length, temp, index;
-
-    // While there are elements in the array
-    while (counter > 0) {
-        // Pick a random index
-        index = Math.floor(Math.random() * counter);
-
-        // Decrease counter by 1
-        counter--;
-
-        // And swap the last element with it
-        temp = array[counter];
-        array[counter] = array[index];
-        array[index] = temp;
+  _.shuffle = function(arr) {
+    return shuffled = function(){
+      var array = arr;
+        // While there are elements in the array
+        while (counter > 0) {
+            // Pick a random index
+            index = Math.floor(Math.random() * counter);
+    
+            // Decrease counter by 1
+            counter--;
+    
+            // And swap the last element with it
+            temp = array[counter];
+            array[counter] = array[index];
+            array[index] = temp;
+        }
+      };
     }
-    return array;
-  };
 
   // Sort the object's values by a criterion produced by an iterator.
   // If iterator is a string, sort objects by that property with the name
@@ -383,13 +381,29 @@ var _ = { };
   // Example:
   // _.zip(['a','b','c','d'], [1,2,3]) returns [['a',1], ['b',2], ['c',3], ['d',undefined]]
   _.zip = function() {
+    var zipped = [];
+    for (var i = 0; i < arguments.length; i++) {
+      for (var j = 0; j < argument[i].length; j++) {
+        zipped[j]
+      }
+    }
   };
 
   // Takes a multidimensional array and converts it to a one-dimensional array.
   // The new array should contain all elements of the multidimensional array.
   _.flatten = function(nestedArray, result) {
+    // var newArray = [];
+    // var iLen = nestedArray.length;
+    // for (var i = 0; i < iLen; i++) {
+    //   var jLen = nestedArray[i].length;
+    //   for (var j = 0; j < jLen; j++) {
+    //     newArray.push(nestedArray[i][j]);
+    //   }
+    // }
+    // return newArray;
+    var merged = [];
+    merged = concat.apply(merged, nestedArray);
   };
-
   // Takes an arbitrary number of arrays and produces an array that contains
   // every item shared between all the passed-in arrays.
   _.intersection = function() {
