@@ -38,7 +38,7 @@ var _ = { };
   // Call iterator(value, key, collection) for each element of collection.
   // Accepts both arrays and objects.
   _.each = function(collection, iterator) {
-    if (collection.isArray) {
+    if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
         iterator(collection[i], i, collection);
       }
@@ -69,7 +69,7 @@ var _ = { };
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, iterator) {
     var holder = [];
-    if (collection.isArray) {
+    if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
         if (iterator(collection[i])) {
           holder.push(collection[i]);
@@ -89,7 +89,7 @@ var _ = { };
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, iterator) {
     var holder = [];
-    if (collection.isArray) {
+    if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
         if (!iterator(collection[i])) {
           holder.push(collection[i]);
@@ -169,7 +169,7 @@ var _ = { };
   // the return value of the previous iterator call.
   _.reduce = function(collection, iterator, initialValue) {
     var previousValue = initialValue || 0;
-    if (collection.isArray) {
+    if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
         previousValue = iterator(previousValue, collection[i]);
       }
@@ -184,7 +184,7 @@ var _ = { };
   // Determine if the array or object contains a given value (using `===`).
   _.contains = function(collection, target) {
     var isNotIn = false;
-    if (collection.isArray) {
+    if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
         if (collection[i] === target) {
           return true;
@@ -204,7 +204,7 @@ var _ = { };
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     if (!iterator) {
-        if (collection.isArray) {
+        if (Array.isArray(collection)) {
           for (var i = 0; i < collection.length; i++) {
             if (!collection[i]) {
               return false;
@@ -221,7 +221,7 @@ var _ = { };
 
       } else {
 
-        if (collection.isArray) {
+        if (Array.isArray(collection)) {
           for (var i = 0; i < collection.length; i++) {
             if (!iterator(collection[i])) {
               return false;
@@ -242,24 +242,24 @@ var _ = { };
   // provided, provide a default one
   _.some = function(collection, iterator) {
     if (!iterator) {
-      // if (collection.isArray) {
+      if (Array.isArray(collection)) {
         for (var i = 0; i < collection.length; i++) {
           if (collection[i]) {
             return true;
           }
         }
-      // } else {
-      //   for (var key in collection) {
-      //     if (collection[ key ]) {
-      //       return true;
-      //     }
-      //   }
-      // }
+      } else {
+        for (var key in collection) {
+          if (collection[ key ]) {
+            return true;
+          }
+        }
+      }
       return false;
 
     } else {
 
-      // if (collection.isArray) {
+      // if (Array.isArray(collection)) {
         for (var i = 0; i < collection.length; i++) {
           if (iterator(collection[i])) {
             return true;
@@ -286,12 +286,25 @@ var _ = { };
   // Extend a given object with all the properties of the passed in
   // object(s).
   _.extend = function(obj) {
-    
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        obj[key] = arguments[i][key];
+      }
+    }
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        if (!obj.hasOwnProperty(key)) {
+          obj[key] = arguments[i][key];
+        }
+      }
+    }
+    return obj;
   };
 
 
@@ -303,6 +316,14 @@ var _ = { };
   // Return a function that can be called at most one time. Subsequent calls
   // should return the previously returned value.
   _.once = function(func) {
+      var ran = false, memo;
+      return function() {
+        if (ran) return memo;
+        ran = true;
+        memo = func.apply(this, arguments);
+        func = null;
+        return memo;
+      }
   };
 
   // Memoize an expensive function by storing its results. You may assume
@@ -312,6 +333,8 @@ var _ = { };
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var holder = func();
+    return holder(arg);
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -321,12 +344,30 @@ var _ = { };
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    setTimeout(func, wait, x, y, z);
   };
 
 
 
   // Shuffle an array.
-  _.shuffle = function(array) {
+  _.shuffle = function(arr) { //Not sure what is happening here, tried my own function first, then pulled 
+                              // a proven one from stackoverflow and nothing works.
+    var counter = array.length, temp, index;
+
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        index = Math.floor(Math.random() * counter);
+
+        // Decrease counter by 1
+        counter--;
+
+        // And swap the last element with it
+        temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+    return array;
   };
 
   // Sort the object's values by a criterion produced by an iterator.
